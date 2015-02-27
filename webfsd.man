@@ -1,0 +1,165 @@
+.TH webfsd 1 "(c) 1999 Gerd Knorr"
+.SH NAME
+webfsd - a lightweight http server
+.SH SYNOPSIS
+.B webfsd [ options ]
+.SH DESCRIPTION
+This is a simple http server for purely static content.  You
+can use it to serve the content of a ftp server via http for
+example.  It is also nice to export some files the quick way
+by starting a http server in a few seconds, without editing
+some config file first.
+.SH OPTIONS
+.TP
+.B -h
+Print a short \fBh\fPelp text and the default values for all options.
+.TP
+.B -4
+Use IPv\fB4\fP.
+.TP
+.B -6
+Use IPv\fB6\fP.
+.TP
+.B -d
+Enable \fBd\fPebug output.
+.TP
+.B -s
+Write a start/stop notice and serious errors to the \fBs\fPyslog.
+Specify this option twice to get a verbose log (additional log
+events like dropped connections).
+.TP
+.B -t sec
+Set network \fBt\fPimeout to >sec< seconds.
+.TP
+.B -c n
+Set the number of allowed parallel \fBc\fPonnections to >n<.  This is
+a per-thread limit.
+.TP
+.B -a n
+Configure the size of the directory cache.  Webfs has a
+cache for directory listings.  The directory will be
+reread if the cached copy is more than one hour old or if
+the mtime of the directory has changed.  The mtime will be
+updated if a file is created or deleted.  It will \fBnot\fP
+be updated if a file is only modified, so you might get
+outdated time stamps and file sizes.
+.TP
+.B -j
+Do not generate a directory listing if the index-file isn't found.
+.TP
+.B -y n
+Set the number of threads to spawn (if compiled with thread support).
+.TP
+.B -p port
+Listen on \fBp\fPort >port< for incoming connections.
+.TP
+.B -r dir
+Set document \fBr\fPoot to >dir<.
+.TP
+.B -R dir
+Set document root to >dir< and chroot to >dir< before start
+serving files.  Note that this affects the path for the access log
+file and pidfile too.
+.TP
+.B -f file
+Use >file< as index \fBf\fPile for directories.  If a client
+asks for a directory, it will get >file< as response if such
+a file exists in the directory and a directory listing otherwise.
+index.html is a frequently used filename.
+.TP
+.B -n hostname
+Set the host\fBn\fPame which the server should use (required
+for redirects).
+.TP
+.B -i ip
+Bind to \fBI\fPP-address >ip<.
+.TP
+.B -l log
+\fBL\fPog all requests to the logfile >log< (common log format).
+Using "-" as filename makes webfsd print the access log to stdout,
+which is only useful together with the -F switch (see below).
+.TP
+.B -L log
+Same as above, but additional flush every line.  Useful if you
+want monitor the logfile with tail -f.
+.TP
+.B -m file
+Read \fBm\fPime types from >file<.  Default is /etc/mime.types.
+The mime types are read before chroot() is called (when started
+with -R).
+.TP
+.B -k file
+Use >file< as pidfile.
+.TP
+.B -u user
+Set \fBu\fPid to >user< (after binding to the tcp port).  This
+option is allowed for root only.
+.TP
+.B -g group
+Set \fBg\fPid to >group< (after binding to the tcp port).  This
+option is allowed for root only.
+.TP
+.B -F
+Don't run as daemon.  Webfsd will not fork into background, not detach
+from terminal and report errors to stderr.
+.TP
+.B -b user:pass
+Set user+password for the exported files.  Only a single
+username/password combination for all files is supported.
+.TP
+.B -e sec
+\fBE\fPxpire documents after >sec< seconds.  You can use that to
+make sure the clients receive fresh data if the content within your
+document root is updated in regular intervals.  Webfsd will send
+a Expires: header set to last-modified time plus >sec< seconds, so
+you can simply use the update interval for >sec<.
+.TP
+.B -v
+Enable \fBv\fPirtual hosts.  This has the effect that webfsd expects
+directories with the hostnames (lowercase) under document root.  If
+started this way: "webfsd -v -r /home/web", it will look for the file
+/home/web/ftp.foobar.org/path/file when asked for
+http://ftp.FOObar.org:8000/path/file.
+.TP
+.B -x path
+Use >path< as CGI directory.  >path< is interpreted relative to the
+document root.  Note that CGI support is limited to GET requests.
+.TP
+.B -S
+\fBS\fPecure web server mode. Warning: This mode is strictly for https.
+.TP
+.B -C
+File to use as SSL \fBc\fPertificate. This file must be in chained PEM
+format, first the privat RSA key, followed by the certificate.
+.TP
+.B -P
+\fBP\fPassword for accessing the SSL certificate.
+.P
+Webfsd can be installed suid root (although the default install
+isn't suid root).  This allows users to start webfsd chroot()ed
+and to bind to ports below 1024.  Webfsd will drop root privileges
+before it starts serving files.
+.P
+Access control simply relies on Unix file permissions.  Webfsd will
+serve any regular file and provide listings for any directory it is
+able to open(2).
+.SH AUTHOR
+Gerd Knorr <kraxel@bytesex.org>
+.br
+FreeBSD port by Charles F. Randall <cfr@pobox.com>
+.SH COPYRIGHT
+Copyright (C) 1999,2000 Gerd Knorr <kraxel@bytesex.org>
+.P
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+.P
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+.P
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.

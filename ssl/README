@@ -1,0 +1,11 @@
+
+just for testing purposes -- two certificates:
+
+server.pem
+	ssl server certificate + private key.  You can use that one
+	as certificate file for webfsd.
+
+root.pem
+	self-signed root ca certificate, this one was used to sign
+	the server certificate.
+

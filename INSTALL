@@ -1,0 +1,59 @@
+
+howto compile and install this package
+======================================
+
+
+really short install instructions
+---------------------------------
+
+	$ make
+	$ su -c "make install"
+
+
+
+the more detailed version
+-------------------------
+
+Make sure you use GNU make.  The file name "GNUmakefile" isn't a joke,
+this package really requires GNU make.
+
+As first step make will do some config checks on your system and write
+the results to Make.config.  If you want to have a look at Make.config
+before the actual build starts you can run this step separately using
+"make config".
+
+The Makefiles use the usual GNU-ish Makefile conventions for variable
+names and default values, i.e. prefix=/usr/local, ...
+
+The values for some frequently adapted variables are initialized from
+the enviroment.  Thus you can change the defaults simply by setting
+environment variables:
+
+	$ prefix="/usr"
+	$ CFLAGS="-O3 -mcpu=i686"
+	$ export prefix CFLAGS
+
+Almost any variable can be overridden on the make command line.  It is
+often used this way to install into some buildroot for packaging ...
+
+	$ su -c "make DESTDIR=/tmp/buildroot install"
+
+... but it works for most other variables equally well.  There are
+some exceptions through, it usually does _not_ work for CFLAGS for
+example.
+
+Try "make verbose=yes" if you want to see the complete command lines
+executed by make instead of the short messages (for trouble shooting,
+because you like this way, for whatever reason ...).  This also makes
+the config checks performed by "make config" more verbose.
+
+If you don't trust my Makefiles you can run "make -n install" to see
+what "make install" would do on your system.  It will produce
+human-readable output (unlike automake ...).
+
+Have fun,
+
+  Gerd
+
+-- 
+Gerd Knorr <kraxel@bytesex.org>
