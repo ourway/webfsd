@@ -62,7 +62,7 @@ xgetpwuid(uid_t uid)
     next++;
     if (CACHE_SIZE == next) next = 0;
     if (used < CACHE_SIZE) used++;
-    
+
     return pw ? pw->pw_name : NULL;
 }
 
@@ -100,7 +100,7 @@ xgetgrgid(gid_t gid)
     next++;
     if (CACHE_SIZE == next) next = 0;
     if (used < CACHE_SIZE) used++;
-    
+
     return gr ? gr->gr_name : NULL;
 }
 
@@ -160,7 +160,7 @@ quote(unsigned char *path, int maxlength)
     return buf;
 }
 
-#if !defined(__FreeBSD__) && !defined(__OpenBSD__)
+#if !defined(__FreeBSD__) && !defined(__OpenBSD__) && !defined(__APPLE__)
 static void strmode(mode_t mode, char *dest)
 {
     static const char *rwx[] = {
@@ -177,7 +177,7 @@ static void strmode(mode_t mode, char *dest)
     case S_IFSOCK: dest[0] = '='; break;
     default:       dest[0] = '?'; break;
     }
-    
+
     /* access rights */
     sprintf(dest+1,"%s%s%s",
 	    rwx[(mode >> 6) & 0x7],
@@ -186,7 +186,7 @@ static void strmode(mode_t mode, char *dest)
 }
 #endif
 
-static char* 
+static char*
 ls(time_t now, char *hostname, char *filename, char *path, int *length)
 {
     DIR            *dir;
@@ -237,7 +237,7 @@ ls(time_t now, char *hostname, char *filename, char *path, int *length)
 	    count--;
 	    continue;
 	}
-	
+
 	files[count]->r = 0;
 	if (S_ISDIR(files[count]->s.st_mode) ||
 	    S_ISREG(files[count]->s.st_mode)) {
@@ -252,7 +252,7 @@ ls(time_t now, char *hostname, char *filename, char *path, int *length)
 	}
     }
     closedir(dir);
-    
+
     /* sort */
     if (count)
 	qsort(files,count,sizeof(struct myfile*),compare_files);
@@ -314,21 +314,21 @@ ls(time_t now, char *hostname, char *filename, char *path, int *length)
 	len += 10;
 	buf[len++] = ' ';
 	buf[len++] = ' ';
-	
+
 	/* user */
 	pw = xgetpwuid(files[i]->s.st_uid);
 	if (NULL != pw)
 	    len += sprintf(buf+len,"%-8.8s  ",pw);
 	else
 	    len += sprintf(buf+len,"%8d  ",(int)files[i]->s.st_uid);
-		
+
 	/* group */
 	gr = xgetgrgid(files[i]->s.st_gid);
 	if (NULL != gr)
 	    len += sprintf(buf+len,"%-8.8s  ",gr);
 	else
 	    len += sprintf(buf+len,"%8d  ",(int)files[i]->s.st_gid);
-	
+
 	/* mtime */
 	if (now - files[i]->s.st_mtime > 60*60*24*30*6)
 	    len += strftime(buf+len,255,"%b %d  %Y  ",
@@ -336,7 +336,7 @@ ls(time_t now, char *hostname, char *filename, char *path, int *length)
 	else
 	    len += strftime(buf+len,255,"%b %d %H:%M  ",
 			    gmtime(&files[i]->s.st_mtime));
-	
+
 	/* size */
 	if (S_ISDIR(files[i]->s.st_mode)) {
 	    len += sprintf(buf+len,"  &lt;DIR&gt;  ");
@@ -358,7 +358,7 @@ ls(time_t now, char *hostname, char *filename, char *path, int *length)
 	    len += sprintf(buf+len,"%4d TB  ",
 			   (int)(files[i]->s.st_size>>40));
 	}
-	
+
 	/* filename */
 	if (files[i]->r) {
 	    len += sprintf(buf+len,"<a href=\"%s%s\">%s</a>\n",

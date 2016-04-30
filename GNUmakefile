@@ -41,6 +41,9 @@ endif
 ifeq ($(USE_THREADS)-$(SYSTEM),yes-freebsd)
 CFLAGS	+= -DUSE_THREADS=1 -D_REENTRANT -pthread
 endif
+ifeq ($(USE_THREADS)-$(SYSTEM),yes-darwin)
+CFLAGS	+= -DUSE_THREADS=1 -D_REENTRANT -pthread
+endif
 
 
 # OpenSSL yes/no
