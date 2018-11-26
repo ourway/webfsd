@@ -192,7 +192,7 @@ static void inline close_on_exec(int fd)
 #ifdef USE_SSL
 extern int ssl_read(struct REQUEST *req, char *buf, int len);
 extern int ssl_write(struct REQUEST *req, char *buf, int len);
-extern int ssl_blk_write(struct REQUEST *req, int offset, int len);
+extern int ssl_blk_write(struct REQUEST *req, off_t offset, size_t len);
 extern void init_ssl(void);
 extern void open_ssl_session(struct REQUEST *req);
 #endif
