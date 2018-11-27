@@ -64,15 +64,14 @@ int ssl_write(struct REQUEST *req, char *buf, int len)
     return rc;
 }
 
-int ssl_blk_write(struct REQUEST *req, int offset, int len)
+int ssl_blk_write(struct REQUEST *req, off_t offset, size_t len)
 {
     int  rc;
     char buf[4096];
 
     if (lseek(req->bfd, offset, SEEK_SET) == -1) {
-	if (debug)
-	    perror("lseek");
-	return -1;
+        if (debug) perror("lseek");
+        return -1;
     }
 
     if (len > sizeof(buf))
