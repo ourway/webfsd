@@ -349,10 +349,3 @@ Changes in 0.1
 ==============
 
   * first public release.
-
-
-Have fun,
-  Gerd
-
--- 
-Gerd Knorr <kraxel@bytesex.org>
