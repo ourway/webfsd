@@ -83,6 +83,7 @@ struct REQUEST {
     off_t       *r_end;
     char        *r_head;
     int         *r_hlen;
+    char        *cors;
     
     /* response */
     int         status;              /* status code (log) */
