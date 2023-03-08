@@ -13,6 +13,11 @@ There is some sendfile emulation code which uses a userland bounce
 buffer, this allows to compile and use webfs on systems without
 sendfile().
 
+Try it:
+=======
+```console
+docker run -it -v `pwd`:"/storage" -p 8000:8000 --rm farshidashouri/webfsd
+```
 
 Features/Design:
 ================
@@ -41,6 +46,11 @@ Features/Design:
  * limited CGI support (GET requests only).
  * optional SSL support.
 
+Try it
+======
+```console
+docker run -it -v `pwd`:"/storage" -p 8000:8000 --rm farshidashouri/webfsd
+```
 
 Plans/BUGS/TODO
 ===============
