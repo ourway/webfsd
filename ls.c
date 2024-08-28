@@ -39,7 +39,7 @@ xgetpwuid(uid_t uid)
     int i;
 
     if (do_chroot)
-	return NULL; /* would'nt work anyway .. */
+	return NULL; /* wouldn't work anyway .. */
 
     for (i = 0; i < used; i++) {
 	if (uids[i] == uid)
@@ -77,7 +77,7 @@ xgetgrgid(gid_t gid)
     int i;
 
     if (do_chroot)
-	return NULL; /* would'nt work anyway .. */
+	return NULL; /* wouldn't work anyway .. */
 
     for (i = 0; i < used; i++) {
 	if (gids[i] == gid)
@@ -445,7 +445,7 @@ get_dir(struct REQUEST *req, char *filename)
 	    /* reached cache size limit -> free last element */
 #if 0
 	    if (this->next != NULL) {
-		fprintf(stderr,"panic: this should'nt happen (%s:%d)\n",
+		fprintf(stderr,"panic: this shouldn't happen (%s:%d)\n",
 			__FILE__, __LINE__);
 		exit(1);
 	    }

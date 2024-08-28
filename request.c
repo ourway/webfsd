@@ -598,7 +598,7 @@ parse_request(struct REQUEST *req)
 	    strcat(req->path,"/");
 	    mkredirect(req);
 	} else {
-	    /* anything else is'nt allowed here */
+	    /* anything else isn't allowed here */
 	    mkerror(req,403,1);
 	}
 	return;
