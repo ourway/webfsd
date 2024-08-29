@@ -515,7 +515,7 @@ parse_request(struct REQUEST *req)
 	return;
 
     /* check basic auth */
-    if (NULL != userpass && basic_password_match(userpass,req->auth)) {
+    if (NULL != userpass && !basic_password_match(userpass,req->auth)) {
 	mkerror(req,401,1);
 	return;
     }
