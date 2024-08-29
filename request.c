@@ -347,6 +347,43 @@ static int sanity_checks(struct REQUEST *req)
     return 0;
 }
 
+int basic_password_match(char *input, char *password)
+{
+    char m = 0;
+    unsigned int i = 0, j = 0;
+
+    if (!input[0] || !password[0]) return 0;
+
+    while (1) {
+
+        /* does the character match? */
+        m |= input[i] ^ password[j];
+
+        /* break if either input[i] or password[j] reaches 0x00 */
+        if (!input[i] || !password[j]) break;
+        else i++;j++;
+
+    }
+
+    /*
+     valid if: (input[i],password[j] is 0x00) and (i,j not zero)
+     (input[i] == 0x00) and (password[j] == 0x00) checks whether the length are equal
+     (i != 0) and (j != 0) detects "" (one null byte)
+
+     tested with:
+     printf("%d\n", basic_password_match("a", "a"));
+     printf("%d\n", basic_password_match("abbb", "ab"));
+     printf("%d\n", basic_password_match("a", "abbbbbb"));
+     printf("%d\n", basic_password_match("", ""));
+     printf("%d\n", basic_password_match("a", ""));
+     printf("%d\n", basic_password_match("", "a"));
+    */
+
+    if (!input[i] && !password[j] && i && j) return 1;
+    else return 0;
+}
+
+
 void
 parse_request(struct REQUEST *req)
 {
@@ -478,7 +515,7 @@ parse_request(struct REQUEST *req)
 	return;
 
     /* check basic auth */
-    if (NULL != userpass && 0 != strcmp(userpass,req->auth)) {
+    if (NULL != userpass && basic_password_match(userpass,req->auth)) {
 	mkerror(req,401,1);
 	return;
     }
