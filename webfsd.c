@@ -294,7 +294,7 @@ access_log(struct REQUEST *req, time_t now)
 /*
  * loglevel usage
  *   ERR    : fatal errors (which are followed by exit(1))
- *   WARNING: this should'nt happen error (oom, ...)
+ *   WARNING: this shouldn't happen error (oom, ...)
  *   NOTICE : start/stop of the daemon
  *   INFO   : "normal" errors (canceled downloads, timeouts,
  *            stuff what happens all the time)
