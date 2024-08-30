@@ -347,6 +347,55 @@ static int sanity_checks(struct REQUEST *req)
     return 0;
 }
 
+/* tested with:
+ printf("%d\n", basic_password_match("", ""));
+ printf("%d\n", basic_password_match("aaaa", ""));
+ printf("%d\n", basic_password_match("", "aaaa"));
+ printf("%d\n", basic_password_match("aaa", "aab"));
+ printf("%d\n", basic_password_match("aaa", "bbb"));
+ printf("%d\n", basic_password_match("aaaaaa", "aa"));
+ printf("%d\n", basic_password_match("aa", "aaaaaa"));
+ printf("%d\n", basic_password_match("a", "a"));
+ printf("%d\n", basic_password_match("aa", "aa"));
+ printf("%d\n", basic_password_match("aaa", "aaa"));
+*/
+int basic_password_match(const char *input, const char *password)
+{
+    char unequal = 0;
+    unsigned int i = 0, j = 0;
+
+    /* special case: input or password is "" (null byte) */
+    if (!input[0] || !password[0]) return 0;
+
+    while (1) {
+
+        /* set the flag if any of the character mismatched */
+        unequal |= input[i] ^ password[j];
+
+        /* move on to next character */
+        i++;j++;
+
+        /* break if either input[] or password[] reaches 0x00 */
+        if (input[i] && password[j]) {
+            ;
+        } else {
+            break;
+        }
+
+    }
+
+    /*
+     valid if: (input[i],password[j] is 0x00) and (all compared characters match)
+     (input[i] == 0x00) and (password[j] == 0x00) checks whether the length are equal
+    */
+
+    if (!input[i] && !password[j] && !unequal) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
 void
 parse_request(struct REQUEST *req)
 {
@@ -478,7 +527,7 @@ parse_request(struct REQUEST *req)
 	return;
 
     /* check basic auth */
-    if (NULL != userpass && 0 != strcmp(userpass,req->auth)) {
+    if (NULL != userpass && !basic_password_match(userpass,req->auth)) {
 	mkerror(req,401,1);
 	return;
     }
@@ -598,7 +647,7 @@ parse_request(struct REQUEST *req)
 	    strcat(req->path,"/");
 	    mkredirect(req);
 	} else {
-	    /* anything else is'nt allowed here */
+	    /* anything else isn't allowed here */
 	    mkerror(req,403,1);
 	}
 	return;
