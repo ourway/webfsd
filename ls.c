@@ -265,7 +265,10 @@ ls(time_t now, char *hostname, char *filename, char *path, int *length)
     len  = 0;
 
     len += sprintf(buf+len,
-		   "<head><title>%s:%d%s</title></head>\n"
+		   "<head>"
+		     "<title>%s:%d%s</title>"
+		     "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />"
+		   "</head>\n"
 		   "<body bgcolor=white text=black link=darkblue vlink=firebrick alink=red>\n"
 		   "<h1>listing: \n",
 		   hostname,tcp_port,path);
