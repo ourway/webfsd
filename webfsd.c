@@ -175,7 +175,7 @@ usage(char *name)
 		pw ? pw->pw_name : "???",
 		gr ? gr->gr_name : "???");
     }
-    exit(1);
+    exit(0);
 }
 
 static void run_as(int id)
