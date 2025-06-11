@@ -71,7 +71,7 @@ static ssize_t xsendfile(int out, int in, off_t offset, off_t off_bytes)
 }
 #else
 
-# warning using slow sendfile() emulation.
+/* Note: using sendfile() emulation on this platform */
 
 /* Poor man's sendfile() implementation. Performance sucks, but it works. */
 # define BUFSIZE 16384
@@ -232,7 +232,7 @@ mkredirect(struct REQUEST *req)
 			"Content-Length: %" PRId64 "\r\n",
 			"302 Redirect",server_name,
 			req->keep_alive ? "Keep-Alive" : "Close",
-			req->hostname,tcp_port,quote(req->path,9999),
+			req->hostname,tcp_port,quote((unsigned char *)req->path,9999),
 			(int64_t)req->lbody);
     mkcors(req);
     req->lres += strftime(req->hres+req->lres,80,

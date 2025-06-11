@@ -111,9 +111,9 @@ cgi_request(struct REQUEST *req)
     /* -------- below is the child process (cgi) code -------- */
 
     /* lookup local socket (before it gets closed) */
-    length = sizeof(addr);
-    getsockname(req->fd,(struct sockaddr*)&addr,&length);
-    getnameinfo((struct sockaddr*)&addr,length,host,64,serv,8,
+    socklen_t addr_length = sizeof(addr);
+    getsockname(req->fd,(struct sockaddr*)&addr,&addr_length);
+    getnameinfo((struct sockaddr*)&addr,addr_length,host,64,serv,8,
 		NI_NUMERICHOST | NI_NUMERICSERV);
     
     /* setup file descriptors */

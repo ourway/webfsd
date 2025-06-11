@@ -143,7 +143,7 @@ char*
 quote(unsigned char *path, int maxlength)
 {
     static unsigned char buf[2048]; /* FIXME: threads break this... */
-    int i,j,n=strlen(path);
+    int i,j,n=strlen((const char *)path);
 
     if (n > maxlength)
 	n = maxlength;
@@ -153,11 +153,11 @@ quote(unsigned char *path, int maxlength)
 	    buf[j] = path[i];
 	    continue;
 	}
-	sprintf(buf+j,"%%%02x",path[i]);
+	sprintf((char *)(buf+j),"%%%02x",path[i]);
 	j += 2;
     }
     buf[j] = 0;
-    return buf;
+    return (char *)buf;
 }
 
 #if !defined(__FreeBSD__) && !defined(__OpenBSD__) && !defined(__APPLE__)
@@ -282,7 +282,7 @@ ls(time_t now, char *hostname, char *filename, char *path, int *length)
 	    buf = re2;
 	}
 	len += sprintf(buf+len,"<a href=\"%s\">%*.*s</a>",
-		       quote(path,h2-path),
+		       quote((unsigned char *)path,h2-path),
 		       (int)(h2-h1),
 		       (int)(h2-h1),
 		       h1);
@@ -362,7 +362,7 @@ ls(time_t now, char *hostname, char *filename, char *path, int *length)
 	/* filename */
 	if (files[i]->r) {
 	    len += sprintf(buf+len,"<a href=\"%s%s\">%s</a>\n",
-			   quote(files[i]->n,9999),
+			   quote((unsigned char *)files[i]->n,9999),
 			   S_ISDIR(files[i]->s.st_mode) ? "/" : "",
 			   files[i]->n);
 	} else {

@@ -389,7 +389,7 @@ parse_request(struct REQUEST *req)
 	}
     }
 
-    unquote(req->path,req->query,req->uri);
+    unquote((unsigned char *)req->path,(unsigned char *)req->query,(unsigned char *)req->uri);
     fixpath(req->path);
     if (debug)
 	fprintf(stderr,"%03d: %s \"%s\" HTTP/%d.%d\n",
@@ -436,7 +436,7 @@ parse_request(struct REQUEST *req)
 	    req->if_range = h+10;
 
 	} else if (0 == strncasecmp(h,"Authorization: Basic ",21)) {
-	    decode_base64(req->auth,h+21,sizeof(req->auth)-1);
+	    decode_base64((unsigned char *)req->auth,(unsigned char *)(h+21),sizeof(req->auth)-1);
 	    if (debug)
 		fprintf(stderr,"%03d: auth: %s\n",req->fd,req->auth);
 	    

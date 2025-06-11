@@ -24,7 +24,7 @@ ifneq ($(verbose),no)
   ac_fini	= echo "... result is $${rc}" >&2; echo >&2; echo "$${rc}"
 else
   # normal
-  ac_init	= echo -n "checking $(1) ... " >&2; rc=no
+  ac_init	= printf "checking $(1) ... " >&2; rc=no
   ac_b_cmd	= $(1) >/dev/null 2>&1 && rc=yes
   ac_s_cmd	= rc=`$(1) 2>/dev/null`
   ac_fini	= echo "$${rc}" >&2; echo "$${rc}"
@@ -124,19 +124,14 @@ ifeq ($(filter config,$(MAKECMDGOALS)),config)
 .PHONY: Make.config
   LIB := $(call ac_lib64)
 else
-  LIB ?= $(call ac_lib64)
-  LIB := $(LIB)
+  -include Make.config
 endif
 .PHONY: config
 config: Make.config
 	@true
 
 Make.config: $(srcdir)/GNUmakefile
-	ifeq ($(UNAME_S),Darwin)
-		@echo "$(make-config-q)" > $@
-	else
-		@echo -e "$(make-config-q)" > $@
-	endif
+	@printf "%b\n" "$(make-config-q)" > $@
 	@echo
 	@echo "Make.config written, edit if needed"
 	@echo

@@ -377,7 +377,7 @@ mainloop(void *thread_arg)
 
     struct REQUEST      *req,*prev,*tmp;
     struct timeval      tv;
-    int                 max,length;
+    int                 max;
     fd_set              rd,wr;
 
     for (;!termsig;) {
@@ -438,6 +438,11 @@ mainloop(void *thread_arg)
 	tv.tv_sec  = keepalive_time;
 	tv.tv_usec = 0;
 	if (-1 == select(max+1,&rd,&wr,NULL,(curr_conn > 0) ? &tv : NULL)) {
+	    if (errno == EINTR) {
+		if (debug)
+		    fprintf(stderr,"select: interrupted by signal\n");
+		continue;
+	    }
 	    if (debug)
 		perror("select");
 	    continue;
@@ -474,12 +479,12 @@ mainloop(void *thread_arg)
 		    if (with_ssl)
 			open_ssl_session(req);
 #endif
-		    length = sizeof(req->peer);
-		    if (-1 == getpeername(req->fd,(struct sockaddr*)&(req->peer),&length)) {
+		    socklen_t peer_length = sizeof(req->peer);
+		    if (-1 == getpeername(req->fd,(struct sockaddr*)&(req->peer),&peer_length)) {
 			xperror(LOG_WARNING,"getpeername",NULL);
 			req->state = STATE_CLOSE;
 		    }
-		    getnameinfo((struct sockaddr*)&req->peer,length,
+		    getnameinfo((struct sockaddr*)&req->peer,peer_length,
 				req->peerhost,64,req->peerserv,8,
 				NI_NUMERICHOST | NI_NUMERICSERV);
 		    if (debug)
@@ -882,6 +887,9 @@ main(int argc, char *argv[])
     tcp_port = atoi(serv);
     opt = 1;
     setsockopt(slisten,SOL_SOCKET,SO_REUSEADDR,&opt,sizeof(opt));
+#ifdef SO_REUSEPORT
+    setsockopt(slisten,SOL_SOCKET,SO_REUSEPORT,&opt,sizeof(opt));
+#endif
     fcntl(slisten,F_SETFL,O_NONBLOCK);
 
     /* Use accept filtering, if available. */
@@ -992,7 +1000,8 @@ main(int argc, char *argv[])
     act.sa_handler = catchsig;
     sigaction(SIGHUP,&act,&old);
     sigaction(SIGTERM,&act,&old);
-    if (debug)
+    /* Handle SIGINT in debug mode or when running in foreground */
+    if (debug || dontdetach)
 	sigaction(SIGINT,&act,&old);
 
     /* go! */

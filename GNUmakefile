@@ -5,7 +5,12 @@ include mk/Variables.mk
 TARGET	:= webfsd
 OBJS	:= webfsd.o request.o response.o ls.o mime.o cgi.o
 
+# Set mime.types path based on OS
+ifeq ($(SYSTEM),darwin)
+mimefile := "/usr/share/cups/mime/mime.types"
+else
 mimefile := "/etc/mime.types"
+endif
 CFLAGS	+= -DMIMEFILE=\"$(mimefile)\"
 CFLAGS	+= -DWEBFS_VERSION=\"$(VERSION)\"
 CFLAGS	+= -D_GNU_SOURCE
@@ -19,6 +24,7 @@ all: build
 
 include mk/Autoconf.mk
 
+ifeq ($(filter config,$(MAKECMDGOALS)),config)
 define make-config
 LIB          := $(LIB)
 SYSTEM       := $(call ac_uname)
@@ -27,6 +33,7 @@ USE_THREADS  := no
 USE_SSL      := $(call ac_header,openssl/ssl.h)
 USE_DIET     := $(call ac_binary,diet)
 endef
+endif
 
 # sendfile yes/no
 ifneq ($(USE_SENDFILE),yes)
