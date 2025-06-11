@@ -906,6 +906,11 @@ main(int argc, char *argv[])
 	run_as (euid);
     if (-1 == bind(slisten, (struct sockaddr*) &ss, ss_len)) {
 	xperror(LOG_ERR,"bind",NULL);
+	if (errno == EADDRINUSE) {
+	    fprintf(stderr, "Error: Port %d is already in use. Please choose a different port or stop the existing server.\n", tcp_port);
+	} else if (errno == EACCES || errno == EPERM) {
+	    fprintf(stderr, "Error: Permission denied to bind to port %d. Ports below 1024 require root privileges.\n", tcp_port);
+	}
         exit(1);
     }
     if (uid != euid)
